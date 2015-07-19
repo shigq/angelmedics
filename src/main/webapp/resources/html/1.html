@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>顾家项目后台平台</title>
+		<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+		<meta content="no-cache" http-equiv="pragma" />
+		<meta content="no-cache, must-revalidate" http-equiv="Cache-Control" />
+		<meta content="0" http-equiv="expires" />
+		<meta name="keywords" content="jquery,ui,easy,easyui,web">
+		<meta name="description" content="easyui help you build your web page easily!">
+		<script type="text/javascript" src="../scripts/jquery-1.11.2.js"></script>
+		<script type="text/javascript" src="login.js"></script>
+		<link href="index.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="shouye.css" type="text/css"></link>
+			<link rel="stylesheet" type="text/css" href="easyui.css" />
+		<link rel="stylesheet" type="text/css" href="icon.css" />
+<!-- 		<link rel="stylesheet" type="text/css" href="http://www.w3cschool.cc/try/jeasyui/demo/demo.css" /> -->
+	<style type="text/css">
+		#fm{
+			margin:0;
+			padding:10px 30px;
+		}
+		.ftitle{
+			font-size:14px;
+			font-weight:bold;
+			color:#666;
+			padding:5px 0;
+			margin-bottom:10px;
+			border-bottom:1px solid #ccc;
+		}
+		.fitem{
+			margin-bottom:5px;
+		}
+		.fitem label{
+			display:inline-block;
+			width:80px;
+		}
+	</style>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.min.js"></script>
+	<script type="text/javascript" src="../scripts/jquery.easyui.min.js"></script>
+	<script type="text/javascript">
+		var url;
+		var mark;
+		function newUser(){
+			$('#dlg').dialog('open').dialog('setTitle','新增用户');
+			$('#fm').form('clear');
+			url = '../../manager/save.json';
+			mark=null;
+		}
+		function editUser(){
+			var row = $('#dg').datagrid('getSelected');
+			if (row){
+				$('#dlg').dialog('open').dialog('setTitle','修改用户');
+				$('#fm').form('load',row);
+				url = '../../manager/save.json?id='+row.id;
+				mark=row.id;
+			}
+		}
+		function saveUser(){
+			var username= $("input[name='username']").val();
+			url1='../../manager/findByname.json';
+		if(mark==null){
+			$.ajax({  
+		        url:url1,  
+		        type:"POST",  
+		        data:"username="+username,  
+		        success: function(response)  {
+		            if(response==false) {
+		            	alert("用户名已存在"); 
+		            } else {
+		            	$('#fm').form('submit',{
+		    				url: url,
+		    				onSubmit: function(){
+		    					return $(this).form('validate');
+		    				},
+		    		
+		    				success: function(result){
+		    					var result = eval('('+result+')');
+		    					if (! result.hasOwnProperty('message')){
+		    						$('#dlg').dialog('close');		// close the dialog
+		    						$('#dg').datagrid('reload');	// reload the user data
+		    					} else {
+		    						$.messager.show({
+		    							title: 'Error',
+		    							msg: '保存用户信息失败'
+		    						});
+		    					}
+		    				}
+		    			});
+		             }
+		        }
+		    }); 
+			}else{ 
+			 $('#fm').form('submit',{
+ 				url: url,
+ 				onSubmit: function(){
+ 					return $(this).form('validate');
+ 				},
+ 				success: function(result){
+ 					var result = eval('('+result+')');
+ 					if (! result.hasOwnProperty('message')){
+ 						$('#dlg').dialog('close');		// close the dialog
+ 						$('#dg').datagrid('reload');	// reload the user data
+ 					} else {
+ 						$.messager.show({
+ 							title: 'Error',
+ 							msg: '保存用户信息失败'
+ 						});
+ 					}
+ 				}
+ 			});	
+			}
+			
+			
+		}
+				
+	function removeUser(){
+			var row = $('#dg').datagrid('getSelected');
+			if (row){
+				$.messager.confirm('提示','确定删除这个用户?',function(r){
+					if (r){
+						$.post('../../manager/delete.json',{id:row.id},function(result){
+							
+							if (! result.hasOwnProperty('message')){
+								$('#dg').datagrid('reload');	// reload the user data
+							} else {
+								$.messager.show({	// show error message
+									title: 'Error',
+									msg: '删除用户信息失败'
+								});
+							}
+						},'json');
+					}
+				});
+			}
+		} 
+		
+	</script>
+	</head>
+
+	<body>
+			<div class="header"> <a  style=" float:right; "  href="../../j_spring_security_logout" class="tuichu" ><span style="color: #ffffff;height: 50px"><span style="font-size:25px;">退出系统</span><span style="color:#ffffff;"></a></div>
+		<!-- <div id="container"> -->
+			<div class="main">
+			<table style="width: 100%;">
+
+				<tr>
+					<td style="background-color: #eeeeee; width: 15%;">
+					<div align="center" style="height: 50px">用户管理</div>
+					<div align="center" style="height: 90px"><a href="../../resources/html/2.html">图表设计</a></div>
+					<div align="center" style="height: 90px"><a href="../../resources/html/reportGird.html">报表设计</a></div>
+					 </td>
+				<td style="width: 85%;">
+					<table id="dg" title="所有用户" class="easyui-datagrid"
+						style="width: 1100px; height: 530px" url="../../manager/findAll.json"
+						toolbar="#toolbar" pagination="false" rownumbers="false"
+						fitColumns="true" singleSelect="true">
+						<thead>
+							<tr>
+								<th field="username" width="50">用户名</th>
+								<th field="nickName" width="50">昵称</th>
+								<th field="mobile" width="50">电话</th>
+								<th field="email" width="50">邮箱</th>
+							</tr>
+						</thead>
+					</table>
+					<div id="toolbar">
+						<a href="#" class="easyui-linkbutton" iconCls="icon-add"
+							plain="true" onclick="newUser()">创建用户</a> <a href="#"
+							class="easyui-linkbutton" iconCls="icon-edit" plain="true"
+							onclick="editUser()">编辑用户</a> <a href="#"
+							class="easyui-linkbutton" iconCls="icon-remove" plain="true"
+							onclick="removeUser()">删除用户</a>
+					</div>
+
+					<div id="dlg" class="easyui-dialog"
+						style="width: 400px; height: 280px; padding: 10px 20px"
+						closed="true" buttons="#dlg-buttons">
+						<div class="ftitle">用户信息</div>
+						<form id="fm" method="post" novalidate>
+							<div class="fitem">
+								<label>用户名:</label> <input name="username"
+									class="easyui-validatebox" required="true" missingMessage="用户名不能为空">
+							</div>
+
+							<div class="fitem">
+								<label>密码:</label> <input name="password" type="password"
+									class="easyui-validatebox" required="true" missingMessage="密码不能为空">
+							</div>
+
+							<div class="fitem">
+								<label>昵称:</label> <input name="nickName"
+									class="easyui-validatebox" >
+							</div>
+
+							<div class="fitem">
+								<label>手机:</label> <input name="mobile"
+									class="easyui-validatebox" >
+							</div>
+							<div class="fitem">
+								<label>邮箱:</label> <input name="email"
+									class="easyui-validatebox" validType="email" invalidMessage="邮箱格式不正确">
+							</div>
+						</form>
+					</div>
+					<div id="dlg-buttons">
+						<a href="#" class="easyui-linkbutton" iconCls="icon-ok"
+							onclick="saveUser()">保存</a> <a href="#" class="easyui-linkbutton"
+							iconCls="icon-cancel"
+							onclick="javascript:$('#dlg').dialog('close')">取消</a>
+					</div>
+				</td>
+			</tr>
+
+			</table>
+
+		</div>
+
+
+		<!-- </div> -->
+		<div class="footer">
+			 <a href='http://www.yonyouup.cn/' target="blank">用友优普</a> 版权所有&nbsp;&copy;&nbsp;2015-2020
+		</div>
+	</body>
+</html>
+

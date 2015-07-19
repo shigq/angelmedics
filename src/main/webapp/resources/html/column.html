@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>顾家项目后台平台</title>
+		<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+		<meta content="no-cache" http-equiv="pragma" />
+		<meta content="no-cache, must-revalidate" http-equiv="Cache-Control" />
+		<meta content="0" http-equiv="expires" />
+		<meta name="keywords" content="jquery,ui,easy,easyui,web">
+		<meta name="description" content="easyui help you build your web page easily!">
+		<script type="text/javascript" src="../scripts/jquery-1.11.2.js"></script>
+		<script type="text/javascript" src="login.js"></script>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.min.js"></script>
+		<script type="text/javascript" src="../scripts/jquery.easyui.min.js"></script>
+		<link href="index.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="shouye.css" type="text/css"></link>
+			<link rel="stylesheet" type="text/css" href="easyui.css" />
+		<link rel="stylesheet" type="text/css" href="icon.css" />
+<!-- 		<link rel="stylesheet" type="text/css" href="http://www.w3cschool.cc/try/jeasyui/demo/demo.css" /> -->
+	<style type="text/css">
+		#fm{
+			margin:0;
+			padding:10px 30px;
+		}
+		.ftitle{
+			font-size:14px;
+			font-weight:bold;
+			color:#666;
+			padding:5px 0;
+			margin-bottom:10px;
+			border-bottom:1px solid #ccc;
+		}
+		.fitem{
+			margin-bottom:5px;
+		}
+		.fitem label{
+			display:inline-block;
+			width:80px;
+		}
+	</style>
+	<script type="text/javascript">
+	var url;
+	var mark;
+	var id;
+	var report;
+	 function getParameter(param)  
+	    {  
+	        var query = window.location.search;//获取URL地址中？后的所有字符  
+	        var iLen = param.length;//获取你的参数名称长度  
+	        var iStart = query.indexOf(param);//获取你该参数名称的其实索引  
+	        if (iStart == -1)//-1为没有该参数  
+	            return "";  
+	        iStart += iLen + 1;  
+	        var iEnd = query.indexOf("&", iStart);//获取第二个参数的其实索引  
+	        if (iEnd == -1)//只有一个参数  
+	            return query.substring(iStart);//获取单个参数的参数值  
+	        return query.substring(iStart, iEnd);//获取第二个参数的值  
+	    }  
+	function init(){
+		
+		var param = getParameter("id");  
+		report=param;
+        $('#dg').treegrid({
+        	url: '../../column/findByreprotId.json?reportId='+param,
+        	
+        });
+	}
+	
+	function queryGird(){
+			window.location.href='../../resources/html/reportGird.html';
+	}
+	function newUser(){
+		var row = $('#dg').datagrid('getSelected');
+		if (row) {
+			url1 = '../../column/findById.json?parentid=' + row.id;
+			$.ajax({  
+		        url:url1,  
+		        type:"POST",  
+		        success: function(response)  {
+		        	if(response==false){
+		        		alert("已经是根栏目了");
+		        	}else{
+		        		$('#dlg').dialog('open').dialog('setTitle', '新增栏目');
+						url = '../../column/save.json?parentid=' + row.id + '&reportId='+ report;	
+		        	}
+		        }
+		        });
+				
+			} else {
+				$('#dlg').dialog('open').dialog('setTitle', '新增栏目');
+				$('#fm').form('clear');
+				url = '../../column/save.json?reportId=' + report;
+			}
+
+		}
+		function editUser() {
+			var row = $('#dg').datagrid('getSelected');
+			if (row) {
+				$('#dlg').dialog('open').dialog('setTitle', '修改栏目');
+				$('#fm').form('load', row);
+				url = '../../column/save.json?id=' + row.id + '&reportId='
+						+ report;
+				id = row.id;
+			}
+		}
+		function saveUser() {
+			$('#fm').form('submit', {
+				url : url,
+				onSubmit : function() {
+					return $(this).form('validate');
+				},
+				success : function(result) {
+					var result = eval('(' + result + ')');
+					if (!result.hasOwnProperty('message')) {
+						$('#dlg').dialog('close'); // close the dialog
+						$('#dg').treegrid('reload'); // reload the user data
+					} else {
+						$.messager.show({
+							title : 'Error',
+							msg : '保存栏目信息失败'
+						});
+					}
+				}
+			});
+		}
+		function removeUser() {
+			var row = $('#dg').datagrid('getSelected');
+			if (row) {
+				$.messager.confirm('提示', '确定删除这个栏目?', function(r) {
+					if (r) {
+						$.post('../../column/delete.json', {
+							id : row.id
+						}, function(result) {
+							if (!result.hasOwnProperty('message')) {
+								$('#dg').treegrid('reload'); // reload the user data
+							} else {
+								$.messager.show({ // show error message
+									title : 'Error',
+									msg : '删除栏目信息失败'
+								});
+							}
+						}, 'json');
+					}
+				});
+			}
+		}
+	</script>
+	</head>
+	<body onload="init()">
+			<div class="header"> <a  style=" float:right; "  href="../../j_spring_security_logout" class="tuichu" ><span style="color: #ffffff;height: 50px"><span style="font-size:25px;">退出系统</span><span style="color:#ffffff;"></a></div>
+		<!-- <div id="container"> -->
+			<div class="main">
+			<table style="width: 100%;">
+
+				<tr>
+					<td style="background-color: #eeeeee; width: 15%;">
+					<div align="center" style="height: 50px"><a href="../../resources/html/1.html">用户管理</a></div>
+					<div align="center" style="height: 90px"><a href="../../resources/html/2.html">图表设计</a></div>
+					<div align="center" style="height: 90px"><a href="../../resources/html/reportGird.html">报表设计</a></div>
+					 </td>
+				<td style="width: 85%;">
+					<!-- <table id="dg" title="所有图表" class="easyui-datagrid"
+						style="width: 1100px; height: 530px" 
+						toolbar="#toolbar" pagination="false" rownumbers="false"
+						fitColumns="true" singleSelect="true">
+						<thead>
+							<tr>
+								<th field="field" width="50">栏目字段</th>
+								<th field="title" width="50">栏目标题</th>
+								<th field="sort" width="50">排序字段</th>
+								<th field="locked" width="50">是否锁定</th>
+								<th field="width" width="50">对应宽度</th>
+								<th field="align" width="50">对齐方式</th>
+								<th field="pattern" width="50">格式化模式</th>
+							</tr>
+						</thead>
+					</table> -->
+						<table id="dg" title="表格栏目" class="easyui-treegrid"
+						style="width: 1100px; height: 530px" toolbar="#toolbar"
+						pagination="false" rownumbers="true" idField="id" treeField="title"
+						fitColumns="true" singleSelect="true">
+						<thead>
+							<tr>
+								<th field="title" width="50">栏目标题</th>
+								<th field="field" width="50">栏目字段</th>
+								<th field="sort" width="50">排序字段</th>
+								<th field="locked" width="50">是否锁定</th>
+								<th field="blnWan" width="50">是否万元</th>
+								<th field="blnPercent" width="50">是否百分数</th>
+								<th field="fieldType" width="50">数据类型</th>
+								<th field="width" width="50">对应宽度</th>
+								<th field="align" width="50">对齐方式</th>
+								<th field="fieldTypeRemark" width="50">格式化模式</th>
+								<th field="groupNum" width="50">分组</th>
+							</tr>
+						</thead>
+					</table>
+					<div id="toolbar">
+						<a href="#" class="easyui-linkbutton" iconCls="icon-add"
+							plain="true" onclick="newUser()">创建栏目</a> <a href="#"
+							class="easyui-linkbutton" iconCls="icon-edit" plain="true"
+							onclick="editUser()">编辑栏目</a> <a href="#"
+							class="easyui-linkbutton" iconCls="icon-remove" plain="true"
+							onclick="removeUser()">删除栏目</a>
+							<a href="#"
+							class="easyui-linkbutton" iconCls="icon-remove" plain="true"
+							onclick="queryGird()">返回报表</a>
+					</div>
+
+					<div id="dlg" class="easyui-dialog"
+						style="width: 520px; height: 470px; padding: 10px 20px"
+						closed="true" buttons="#dlg-buttons">
+						<div class="ftitle">栏目信息</div>
+						<form id="fm" method="post" novalidate>
+							<div class="fitem">
+								<label>栏目标题:</label> <input name="title"
+									class="easyui-validatebox" required="true" missingMessage="栏目标题不能为空">
+							</div>
+							<div class="fitem">
+								<label>栏目字段:</label> <input name="field"
+									class="easyui-validatebox" >
+							</div>
+							<div class="fitem">
+								<label>排序字段:</label> <input name="sort"
+									class="easyui-numberbox" required="true" missingMessage="排序字段不能为空">
+							</div>
+							<div class="fitem">
+								<label>是否锁定:</label> 
+								<select name="locked" style="width: 180px;height: 25px">
+								<option value="true" selected="selected">是</option>
+								<option value="false">否</option>
+								</select>
+								</div>
+							
+							<div class="fitem">
+								<label>数据类型:</label> 
+								<select name="fieldType" style="width: 180px;height: 25px">
+								<option value="string" selected="selected">字符串</option>
+								<option value="number">数字</option>
+								<option value="date">日期</option>
+								<option value="ref">参照</option>
+								<option value="enumerate">枚举</option>
+								</select>
+							</div>
+							<div class="fitem">
+								<label>是否万元:</label> 
+								<select name="blnWan" style="width: 180px;height: 25px">
+								<option value="true" selected="selected">是</option>
+								<option value="false">否</option>
+								</select>
+							</div>
+							<div class="fitem">
+								<label>是否百分数:</label> 
+								<select name="blnPercent" style="width: 180px;height: 25px">
+								<option value="true" selected="selected">是</option>
+								<option value="false">否</option>
+								</select>
+							</div>
+							<div class="fitem">
+								<label>对齐方式:</label> 
+								<select name="align" style="width: 180px;height: 25px">
+								<option value="左" selected="selected">左</option>
+								<option value="中">中</option>
+								<option value="右">右</option>
+								</select>
+							</div>
+							<div class="fitem">
+								<label>对应宽度:</label> <input name="width" class="easyui-validatebox">
+							</div>
+							<div class="fitem">
+								<label>格式化模式:</label> <input name="fieldTypeRemark" class="easyui-validatebox">
+							</div>	
+							<div class="fitem">
+								<label>分组:</label> <input name="groupNum" class="easyui-numberbox" required="true" missingMessage="排序字段不能为空">
+							</div>	
+						</form>
+					</div>
+					<div id="dlg-buttons">
+						<a href="#" class="easyui-linkbutton" iconCls="icon-ok"
+							onclick="saveUser()">保存</a> <a href="#" class="easyui-linkbutton"
+							iconCls="icon-cancel"
+							onclick="javascript:$('#dlg').dialog('close')">取消</a>
+					</div>
+				</td>
+			</tr>
+			</table>
+
+		</div>
+
+
+		<!-- </div> -->
+		<div class="footer">
+			 <a href='http://www.yonyouup.cn/' target="blank">用友优普</a> 版权所有&nbsp;&copy;&nbsp;2015-2020
+		</div>
+	</body>
+</html>
+

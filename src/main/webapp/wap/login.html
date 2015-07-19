@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>华人医生</title>
+<meta name="keywords" content=""/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="css/base.css"/>
+<link rel="stylesheet" href="css/animation.css"/>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/media.css"/>
+<script type="text/javascript" src="js/jquery-1.10.1.min.js"></script>
+</head>
+<script type="text/javascript">
+
+function doLogin() {
+	if (validate()) {
+		$.post("/patient/login.do", $('form').serialize(), function(result) {
+			if ("false" == result) {
+				$("#errorMsg").empty().append("用户名或密码不正确！");
+			} else {
+				self.location='index.html';
+			}
+		});;
+	}
+}
+
+
+function validate(){
+	if($("#usercode").val()==""){
+		$("#errorMsg").empty().append("请输入用户名");
+		return false;
+	}else if($("#password").val()==""){
+		$("#errorMsg").empty().append("请输入密码");
+		return false;
+	}else{ 
+	    $("#errorMsg").empty();
+	}
+	return true;
+}
+</script>
+<body>
+<div class="head">
+	<div class="auto">
+    	<span>用户登录</span>
+        <i class="ico retu"></i>
+    </div>
+</div>
+<div class="main">
+	<div class="login">
+		<form>
+	    	<div class="sTab">
+	        	<i class="ico ico21"></i>
+	            <input name="usercode" type="text" id="usercode" placeholder="请输入手机号码">
+	        </div>
+	        <div class="sTab mt15">
+	        	<i class="ico ico22"></i>
+	            <input name="password" type="password" id="password" placeholder="请输入密码">
+	        </div>
+	        <div id="errorMsg"></div>
+	        <button type="button" class="butn mt20" id="btn_submit" onclick="doLogin()">登录</button>
+	    </form>
+        <div class="zmos mt40">
+        	<a href="sigin.html">注册新账号</a><u>|</u>
+            <a href="#">忘记密码</a>
+        </div>
+    </div>
+</div>
+</body>
+</html> 

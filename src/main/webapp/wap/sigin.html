@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>华人医生</title>
+<meta name="keywords" content=""/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="css/base.css"/>
+<link rel="stylesheet" href="css/animation.css"/>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/media.css"/>
+<script type="text/javascript" src="js/jquery-1.10.1.min.js"></script>
+</head>
+<script type="text/javascript">
+	//异步登录
+	$(document).ready(function() {
+		$('#btn_submit').bind('click',function(){
+			$.post("/patient/register.do", $('form').serialize(), function(result) {
+				alert(result);
+			});;
+		});
+	});
+</script>
+<body>
+<div class="head">
+	<div class="auto">
+    	<span>用户注册</span>
+        <i class="ico retu"></i>
+    </div>
+</div>
+<div class="main">
+	<form>
+	<div class="login">
+    	<div class="sTab">
+        	<i class="ico ico21"></i>
+            <input name="usercode" type="text" placeholder="请输入手机号码">
+        </div>
+        <div class="yzm mt15">
+            <div class="sTab">
+                <i class="ico ico23"></i>
+                <input name="" type="text" placeholder="请输入验证码" class="yzm">
+            </div>
+            <a href="#" class="hcm">获取验证码</a>
+        </div>
+        <div class="sTab mt15">
+        	<i class="ico ico22"></i>
+            <input name="password" type="password" placeholder="请输入6/8位字母数字组合密码">
+        </div>
+        <div class="sTab mt15">
+        	<i class="ico ico22"></i>
+            <input name="" type="password" placeholder="再次输入密码">
+        </div>
+        <button class="butn mt20" id="btn_submit">立即注册</button>
+    </div>
+    </form>
+</div>
+</body>
+</html> 

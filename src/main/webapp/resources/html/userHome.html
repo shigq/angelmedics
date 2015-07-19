@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="keywords" content="jquery,ui,easy,easyui,web">
+	<meta name="description" content="easyui help you build your web page easily!">
+	<title>用户管理</title>
+
+	<link rel="stylesheet" type="text/css" href="http://www.w3cschool.cc/try/jeasyui/themes/default/easyui.css" />
+	<link rel="stylesheet" type="text/css" href="http://www.w3cschool.cc/try/jeasyui/themes/icon.css" />
+	<link rel="stylesheet" type="text/css" href="http://www.w3cschool.cc/try/jeasyui/demo/demo.css" />
+	<style type="text/css">
+		#fm{
+			margin:0;
+			padding:10px 30px;
+		}
+		.ftitle{
+			font-size:14px;
+			font-weight:bold;
+			color:#666;
+			padding:5px 0;
+			margin-bottom:10px;
+			border-bottom:1px solid #ccc;
+		}
+		.fitem{
+			margin-bottom:5px;
+		}
+		.fitem label{
+			display:inline-block;
+			width:80px;
+		}
+	</style>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.min.js"></script>
+	<script type="text/javascript" src="http://www.w3cschool.cc/try/jeasyui/jquery.easyui.min.js"></script>
+	<script type="text/javascript">
+		var url;
+		function newUser(){
+			$('#dlg').dialog('open').dialog('setTitle','新增用户');
+			$('#fm').form('clear');
+			url = '/manager/save.json';
+		}
+		function editUser(){
+			var row = $('#dg').datagrid('getSelected');
+			if (row){
+				$('#dlg').dialog('open').dialog('setTitle','修改用户');
+				$('#fm').form('load',row);
+				url = '/manager/save.json?id='+row.id;
+			}
+		}
+		function saveUser(){
+			var username= $("input[name='username']").val();
+			$.ajax({  
+		        url:url1,  
+		        type:"POST",  
+		        data:"username="+username,  
+		        success: function(response)  {
+
+		            if(response==false) {
+		            	alert("用户名已存在"); 
+		            } else {
+		            	$('#fm').form('submit',{
+		    				url: url,
+		    				onSubmit: function(){
+		    					return $(this).form('validate');
+		    				},
+		    		
+		    				success: function(result){
+		    					var result = eval('('+result+')');
+		    					if (! result.hasOwnProperty('message')){
+		    						$('#dlg').dialog('close');		// close the dialog
+		    						$('#dg').datagrid('reload');	// reload the user data
+		    					} else {
+		    						$.messager.show({
+		    							title: 'Error',
+		    							msg: '保存用户信息失败'
+		    						});
+		    					}
+		    				}
+		    			});
+		            }
+		        }
+		    });
+			
+			
+		}
+				
+		function removeUser(){
+			var row = $('#dg').datagrid('getSelected');
+			if (row){
+				$.messager.confirm('提示','确定删除这个用户?',function(r){
+					if (r){
+						$.post('/manager/delete.json',{id:row.id},function(result){
+							if (! result.hasOwnProperty('message')){
+								$('#dg').datagrid('reload');	// reload the user data
+							} else {
+								$.messager.show({	// show error message
+									title: 'Error',
+									msg: '删除用户信息失败'
+								});
+							}
+						},'json');
+					}
+				});
+			}
+		}
+	</script>
+</head>
+<body>
+<div id="loginBar"><a href="/j_spring_security_logout">退出登陆</a></div>
+	
+	<table id="dg" title="所有用户" class="easyui-datagrid" style="width:700px;height:250px"
+			url="/manager/findAll.json"
+			toolbar="#toolbar" pagination="false"
+			rownumbers="false" fitColumns="true" singleSelect="true">
+		<thead>
+			<tr>
+				<th field="username" width="50">用户名</th>
+				<th field="nickName" width="50">昵称</th>
+				<th field="mobile" width="50">电话</th>
+				<th field="email" width="50">邮箱</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar">
+		<a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">创建用户</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">编辑用户</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="removeUser()">删除用户</a>
+	</div>
+	
+	<div id="dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
+			closed="true" buttons="#dlg-buttons">
+		<div class="ftitle">用户信息</div>
+		<form id="fm" method="post" novalidate>
+			<div class="fitem">
+				<label>用户名:</label>
+				<input name="username" class="easyui-validatebox" required="true">
+			</div>
+			
+			 <div class="fitem">
+				<label>密码:</label>
+				<input name="password" type="password"  class="easyui-validatebox" required="true">
+			</div>
+			
+			<div class="fitem">
+				<label>昵称:</label>
+				<input name="nickName" class="easyui-validatebox" required="false">
+			</div>
+			
+			<div class="fitem">
+				<label>手机:</label>
+				<input name="mobile">
+			</div>
+			<div class="fitem">
+				<label>邮箱:</label>
+				<input name="email" class="easyui-validatebox" validType="email">
+			</div>
+		</form>
+	</div>
+	<div id="dlg-buttons">
+		<a href="#" class="easyui-linkbutton" iconCls="icon-ok" onclick="saveUser()">保存</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">取消</a>
+	</div>
+</body>
+</html>

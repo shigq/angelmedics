@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>华人医生</title>
+<meta name="keywords" content=""/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="css/base.css"/>
+<link rel="stylesheet" href="css/animation.css"/>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/media.css"/>
+<script type="text/javascript" src="js/jquery-1.10.1.min.js"></script>
+
+<script type="text/javascript">
+  //异步保存
+	$(document).ready(function() {
+		$('#btn_submit').bind('click',function(){
+			$.post("/patient/login.do", $('form').serialize(), function(result) {
+				alert(result);
+			});;
+		});
+	});
+</script>
+</head>
+<body>
+<div class="head">
+	<div class="auto">
+    	<span>张喜军</span>
+        <i class="ico retu"></i>
+    </div>
+</div>
+<div class="main">
+    <div class="reser reser2">
+         <form>
+        
+    	<ul>
+        	<li>
+                <dl class="clearfix">
+                	<dt><img src="images/a_03.jpg"></dt>
+                    <dd>
+                    	<p class="tit">
+                        	<span>张喜军</span><i>副主任医师</i>
+                        	<span class="ml10">评价:<u class="ico ico26"></u><u class="ico ico26"></u><u class="ico ico26"></u><u class="ico ico26"></u><u class="ico ico26"></u></span>
+                        </p>
+                        <p class="zt">上海市东方医院同济大学附属东方医院</p>
+                        <p class="zt">耳鼻喉科  从业31年</p>
+                    </dd>
+                </dl>
+                <div class="con mt5">
+                	<div class="flas clearfix">
+                    	<p class="tfi">专长：</p>
+                        <p class="cfi">
+                        	<a href="#" class="kis">鼻炎</a>
+                        	<a href="#" class="kis">咽喉炎</a>
+                            <a href="#" class="kis">哮喘</a>
+                        </p>
+                    </div>
+                	<div class="flas mt5 clearfix">
+                    	<p class="tfi">简介：</p>
+                        <div class="cfi">
+                            <p>2000年美国医学博士</p>
+                            <p>享受国务院特殊津贴</p>
+                            <p>北大三院副院长</p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+           		<div class="ytime">
+                    <p class="tit">预约时间</p>
+                    <div class="oTime">
+                    	<i class="ico ico27"></i>
+                        <i class="ico ico28"></i>
+                        <span>2015年7月1日</span>
+                    </div>
+                    <div class="cTime">
+                    	<p class="ti">上午</p>
+                        <p class="ci">
+                        	<span>8:00-9:00</span>
+                            <span class="cur">9:00-10:00</span>
+                            <span>10:00-11:00</span>
+                            <span>11:00-12:00</span>
+                        </p>
+                        <p class="ti mt10">下午</p>
+                        <p class="ci">
+                        	<span>14:00-15:00</span>
+                            <span>15:00-16:00</span>
+                            <span>16:00-17:00</span>
+                            <span>17:00-18:00</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="yue">
+                	<span>金额：<i>3.00</i></span>
+                	<input type="hidden" value="3" name="amount"/>
+                    <a href="#" id="btn_submit">立即预约</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+     </form>
+</div>
+<div class="dNav">
+	<div class="dauto">
+    	<ul class="clearfix">
+        	<li>
+            	<a href="index.html">
+                	<i class="ico ico8"></i>
+                    首页
+                </a>
+            </li>
+            <li>
+            	<a href="#">
+                	<i class="ico ico9"></i>
+                    寻医问诊
+                </a>
+            </li>
+            <li class="cur">
+            	<a href="#">
+                	<i class="ico ico10"></i>
+                    我的预约
+                </a>
+            </li>
+            <li>
+            	<a href="#">
+                	<i class="ico ico11"></i>
+                    我的
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="dNavHei"></div>
+</body>
+</html> 

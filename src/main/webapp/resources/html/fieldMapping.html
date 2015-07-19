@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>顾家项目后台平台</title>
+		<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+		<meta content="no-cache" http-equiv="pragma" />
+		<meta content="no-cache, must-revalidate" http-equiv="Cache-Control" />
+		<meta content="0" http-equiv="expires" />
+		<meta name="keywords" content="jquery,ui,easy,easyui,web">
+		<meta name="description" content="easyui help you build your web page easily!">
+		<script type="text/javascript" src="../scripts/jquery-1.11.2.js"></script>
+		<script type="text/javascript" src="login.js"></script>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.min.js"></script>
+		<script type="text/javascript" src="../scripts/jquery.easyui.min.js"></script>
+		<link href="index.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="shouye.css" type="text/css"></link>
+			<link rel="stylesheet" type="text/css" href="easyui.css" />
+		<link rel="stylesheet" type="text/css" href="icon.css" />
+<!-- 		<link rel="stylesheet" type="text/css" href="http://www.w3cschool.cc/try/jeasyui/demo/demo.css" /> -->
+	<style type="text/css">
+		#fm{
+			margin:0;
+			padding:10px 30px;
+		}
+		.ftitle{
+			font-size:14px;
+			font-weight:bold;
+			color:#666;
+			padding:5px 0;
+			margin-bottom:10px;
+			border-bottom:1px solid #ccc;
+		}
+		.fitem{
+			margin-bottom:5px;
+		}
+		.fitem label{
+			display:inline-block;
+			width:80px;
+		}
+	</style>
+	<script type="text/javascript">
+	var url;
+	var mark;
+	var id;
+	var report;
+	 function getParameter(param)  
+	    {  
+	        var query = window.location.search;//获取URL地址中？后的所有字符  
+	        var iLen = param.length;//获取你的参数名称长度  
+	        var iStart = query.indexOf(param);//获取你该参数名称的其实索引  
+	        if (iStart == -1)//-1为没有该参数  
+	            return "";  
+	        iStart += iLen + 1;  
+	        var iEnd = query.indexOf("&", iStart);//获取第二个参数的其实索引  
+	        if (iEnd == -1)//只有一个参数  
+	            return query.substring(iStart);//获取单个参数的参数值  
+	        return query.substring(iStart, iEnd);//获取第二个参数的值  
+	    }  
+	function init(){
+		var param = getParameter("id");  
+		report=param;
+        $('#tt').datagrid({
+        	url: '../../field/findByreprotId.json?reportId='+param,
+        });
+        
+	}
+	
+	function queryCondition(){
+		
+			window.location.href='../../resources/html/2.html';
+	}
+	function queryGird(){
+			window.location.href='../../resources/html/reportGird.html';
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	var products = [
+	    		    {productid:'FI-SW-01',name:'Koi'},
+	    		    {productid:'K9-DL-01',name:'Dalmation'},
+	    		    {productid:'RP-SN-01',name:'Rattlesnake'},
+	    		    {productid:'RP-LI-02',name:'Iguana'},
+	    		    {productid:'FL-DSH-01',name:'Manx'},
+	    		    {productid:'FL-DLH-02',name:'Persian'},
+	    		    {productid:'AV-CB-01',name:'Amazon Parrot'}
+	    		];
+	    		$(function(){
+	    			$('#tt').datagrid({
+	    				title:'所有映射',
+	    				iconCls:'icon-edit',
+	    				width:1100,
+	    				height:530,
+	    				singleSelect:true,
+	    				idField:'id',
+	    				columns:[[
+							{field:'id',title:'来源字段',width:100},
+	    					{field:'fromFiled',title:'来源字段',width:400,editor:'text'},
+	    					{field:'toFiled',title:'目标字段',width:400,
+	    						formatter:function(value){
+	    							for(var i=0; i<products.length; i++){
+	    								if (products[i].productid == value) return products[i].name;
+	    							}
+	    							return value;
+	    						},
+	    						editor:{
+	    							type:'combobox',
+	    							options:{
+	    								valueField:'productid',
+	    								textField:'name',
+	    								data:products,
+	    								required:true
+	    							}
+	    						}
+	    					},
+	    					{field:'action',title:'Action',width:80,align:'center',
+	    						formatter:function(value,row,index){
+	    							if (row.editing){
+	    								var s = '<a href="#" onclick="saverow(this)">保存</a> ';
+	    								var c = '<a href="#" onclick="cancelrow(this)">取消</a>';
+	    								return s+c;
+	    							} else {
+	    								var e = '<a href="#" onclick="editrow(this)">编辑</a> ';
+	    								var d = '<a href="#" onclick="deleterow(this)">删除</a>';
+	    								return e+d;
+	    							}
+	    						}
+	    					}
+	    				]],
+	    				onBeforeEdit:function(index,row){
+	    					row.editing = true;
+	    					updateActions(index);
+	    				},
+	    				onAfterEdit:function(index,row){
+	    					row.editing = false;
+	    					updateActions(index);
+	    				},
+	    				onCancelEdit:function(index,row){
+	    					row.editing = false;
+	    					updateActions(index);
+	    				}
+	    			});
+	    		});
+	    		function updateActions(index){
+	    			$('#tt').datagrid('updateRow',{
+	    				index: index,
+	    				row:{}
+	    			});
+	    		}
+	    		function getRowIndex(target){
+	    			var tr = $(target).closest('tr.datagrid-row');
+	    			return parseInt(tr.attr('datagrid-row-index'));
+	    		}
+	    		function editrow(target){
+	    			$('#tt').datagrid('beginEdit', getRowIndex(target));
+	    		}
+	    		function deleterow(target){
+	    			$.messager.confirm('Confirm','Are you sure?',function(r){
+	    				if (r){
+	    					$('#tt').datagrid('deleteRow', getRowIndex(target));
+	    				}
+	    			});
+	    		}
+	    		function saverow(target){
+	    			$('#tt').datagrid('endEdit', getRowIndex(target));
+	    		}
+	    		function cancelrow(target){
+	    			$('#tt').datagrid('cancelEdit', getRowIndex(target));
+	    		}
+	    		function insert(){
+	    			var row = $('#tt').datagrid('getSelected');
+	    			if (row){
+	    				var index = $('#tt').datagrid('getRowIndex', row);
+	    			} else {
+	    				index = 0;
+	    			}
+	    			$('#tt').datagrid('insertRow', {
+	    				index: index,
+	    				row:{
+	    					status:'P'
+	    				}
+	    			});
+	    			$('#tt').datagrid('selectRow',index);
+	    			$('#tt').datagrid('beginEdit',index);
+	    		}
+	    	</script>
+	</head>
+	<body onload="init()">
+			<div class="header"> <a  style=" float:right; "  href="../../j_spring_security_logout" class="tuichu" ><span style="color: #ffffff;height: 50px"><span style="font-size:25px;">退出系统</span><span style="color:#ffffff;"></a></div>
+		<!-- <div id="container"> -->
+			<div class="main">
+			<table style="width: 100%;">
+
+				<tr>
+					<td style="background-color: #eeeeee; width: 15%;">
+					<div align="center" style="height: 50px"><a href="../../resources/html/1.html">用户管理</a></div>
+					<div align="center" style="height: 90px"><a href="../../resources/html/2.html">图表设计</a></div>
+					<div align="center" style="height: 90px"><a href="../../resources/html/reportGird.html">报表设计</a></div>
+					 </td>
+				<td style="width: 85%;">
+					<table id="tt" title="所有维度" class="easyui-datagrid"
+						style="width: 1100px; height: 530px" 
+						toolbar="#toolbar">
+						
+					</table>
+					<div id="toolbar">
+							<a href="#"
+							class="easyui-linkbutton" iconCls="icon-remove" plain="true"
+							onclick="queryCondition()">返回图表</a>
+							<a href="#"
+							class="easyui-linkbutton" iconCls="icon-remove" plain="true"
+							onclick="insert()">插入单行</a>
+					</div>
+				</td>
+			</tr>
+			</table>
+
+		</div>
+
+
+		<!-- </div> -->
+		<div class="footer">
+			 <a href='http://www.yonyouup.cn/' target="blank">用友优普</a> 版权所有&nbsp;&copy;&nbsp;2015-2020
+		</div>
+	</body>
+</html>
+

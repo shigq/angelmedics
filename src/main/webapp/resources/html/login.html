@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>顾家项目后台平台</title>
+		<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+		<meta content="no-cache" http-equiv="pragma" />
+		<meta content="no-cache, must-revalidate" http-equiv="Cache-Control" />
+		<meta content="0" http-equiv="expires" />
+		<script type="text/javascript" src="../scripts/jquery-1.11.2.js"></script>
+		<script type="text/javascript" src="login.js"></script>
+		<link rel="stylesheet" href="shouye.css" type="text/css"></link>
+	</head>
+
+	<body>
+			<div class="header"></div>
+		<div id="container">
+			<div class="main">
+				<div class="user"
+					style="width: 176px; height: 57px; background: url(../images/shouyeimages/denglu_03.jpg); margin-top: 70px; margin-left: 30px; float: center;"}></div>
+				<div class="content">
+					<div class="regsiter_left">
+						使用用户名登录  
+						<form action="" name="mainForm" method="post" id="mainForm">
+							<div class="login">
+								<div class="login_a"></div>
+								<div class="login_right">
+									<input class="input" name="j_username" id="username" type="text"
+										size="30" onblur="errorTimes();" />
+								</div>
+								<div style="float: left; font-size: 14px;" id="usernameTip"
+									name="nameError"></div>
+
+							</div>
+							<div class="login">
+								<div class="login_b"></div>
+								<div class="login_right">
+									<input class="input" name="j_password" id="password"
+										type="password" size="20" />
+								</div>
+								<div style="float: left; font-size: 14px;" id="passwordTip"
+									name="passwordError"></div>
+							</div>
+							<div id="checkCode">
+							验证码: <input name="captcha" type="text" style="width:100px;height:20px" id="captcha" maxlength="4" class="chknumber_input" /> 
+      						<img src="../../captcha/image.do" id="captchaImage"  style="margin-bottom: -3px" width="120" height="60" />  
+							</div>
+						
+							<div class="login_di" align="center">
+						<!-- 	<input name="submit" type="button" id="login" value="登陆"/> -->
+								<input type="image" src="images/shouyeimages/denglu_07.jpg"
+									onmousemove="this.src='images/shouyeimages/denglu_07a.jpg'"
+									onmouseout="this.src='images/shouyeimages/denglu_07.jpg'"
+									id="login" onclick="javascript:login();return false;" />
+								</div>
+								<div id="results"></div> 	
+						</form>
+
+
+					</div>
+
+
+				</div>
+
+
+			</div>
+
+
+		</div>
+		<div class="footer">
+			 <a href='http://www.yonyouup.cn/' target="blank">用友优普</a> 版权所有&nbsp;&copy;&nbsp;2015-2020
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	$.cookie('show_a','0');
+</script>

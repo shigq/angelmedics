@@ -1,0 +1,255 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>顾家项目后台平台</title>
+		<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+		<meta content="no-cache" http-equiv="pragma" />
+		<meta content="no-cache, must-revalidate" http-equiv="Cache-Control" />
+		<meta content="0" http-equiv="expires" />
+		<meta name="keywords" content="jquery,ui,easy,easyui,web">
+		<meta name="description" content="easyui help you build your web page easily!">
+		<script type="text/javascript" src="../scripts/jquery-1.11.2.js"></script>
+		<script type="text/javascript" src="login.js"></script>
+		<link href="index.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="shouye.css" type="text/css"></link>
+		<link rel="stylesheet" type="text/css" href="easyui.css" />
+		<link rel="stylesheet" type="text/css" href="icon.css" />
+	<style type="text/css">
+		#fm{
+			margin:0;
+			padding:10px 30px;
+		}
+		.ftitle{
+			font-size:14px;
+			font-weight:bold;
+			color:#666;
+			padding:5px 0;
+			margin-bottom:10px;
+			border-bottom:1px solid #ccc;
+		}
+		.fitem{
+			margin-bottom:5px;
+		}
+		.fitem label{
+			display:inline-block;
+			width:80px;
+		}
+	</style>
+<!-- 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.min.js"></script> -->
+	<script type="text/javascript" src="../scripts/jquery.easyui.min.js"></script>
+	<script type="text/javascript">
+		var url;
+		var mark;
+		var id;
+		function queryCondition(){
+			var row = $('#dg').datagrid('getSelected');
+			if (row){
+				window.location.href='../../resources/html/3.html?id='+row.id;
+		}
+		}
+		function newUser(){
+			$('#dlg').dialog('open').dialog('setTitle','新增报表');
+			$('#fm').form('clear');
+			url = '../../reportChart/save.json';
+			mark=null;
+		}
+		function editUser(){
+			var row = $('#dg').datagrid('getSelected');
+			if (row){
+				$('#dlg').dialog('open').dialog('setTitle','修改报表');
+				$('#fm').form('load',row);
+				url = '../../reportChart/save.json?id='+row.id;
+				mark=row.id;
+			}
+		}
+		function queryCoutline(){
+			var row = $('#dg').datagrid('getSelected');
+			if (row){
+				window.location.href='../../resources/html/coutline.html?id='+row.id;
+		}
+		}
+		function queryField(){
+			var row = $('#dg').datagrid('getSelected');
+			if (row){
+				window.location.href='../../resources/html/field.html?id='+row.id;
+		}
+		}
+		function saveUser(){
+			var code= $("input[name='code']").val();
+			url1='../../reportChart/findBycode.json';
+			if(mark==null){
+				$.ajax({  
+			        url:url1,  
+			        type:"POST",  
+			        data:"code="+code,  
+			        success: function(response)  {
+			            if(response==false) {
+			            	alert("报表编码已存在"); 
+			            } else {
+			            	$('#fm').form('submit',{
+			    				url: url,
+			    				onSubmit: function(){
+			    					return $(this).form('validate');
+			    				},
+			    				success: function(result){
+			    					var result = eval('('+result+')');
+			    					if (! result.hasOwnProperty('message')){
+			    						$('#dlg').dialog('close');		// close the dialog
+			    						$('#dg').datagrid('reload');	// reload the user data
+			    					} else {
+			    						$.messager.show({
+			    							title: 'Error',
+			    							msg: '保存图表信息失败'
+			    						});
+			    					}
+			    				}
+			    			}); 
+			             }
+			        }
+			    }); 
+				}else{ 
+		            	$('#fm').form('submit',{
+		    				url: url,
+		    				onSubmit: function(){
+		    					return $(this).form('validate');
+		    				},
+		    				success: function(result){
+		    					var result = eval('('+result+')');
+		    					if (! result.hasOwnProperty('message')){
+		    						$('#dlg').dialog('close');		// close the dialog
+		    						$('#dg').datagrid('reload');	// reload the user data
+		    					} else {
+		    						$.messager.show({
+		    							title: 'Error',
+		    							msg: '保存图表信息失败'
+		    						});
+		    					}
+		    				}
+		    			}); 
+		            	}
+		}
+				
+		function removeUser(){
+			var row = $('#dg').datagrid('getSelected');
+			if (row){
+				$.messager.confirm('提示','确定删除这个图表?',function(r){
+					if (r){
+						$.post('../../reportChart/delete.json',{id:row.id},function(result){
+							if (! result.hasOwnProperty('message')){
+								$('#dg').datagrid('reload');	// reload the user data
+							} else {
+								$.messager.show({	// show error message
+									title: 'Error',
+									msg: '删除图表信息失败'
+								});
+							}
+						},'json');
+					}
+				});
+			}
+		}
+	</script>
+	</head>
+
+	<body>
+			<div class="header"> <a  style=" float:right; "  href="../../j_spring_security_logout" class="tuichu" ><span style="color: #ffffff;height: 50px"><span style="font-size:25px;">退出系统</span><span style="color:#ffffff;"></a></div>
+		<!-- <div id="container"> -->
+			<div class="main">
+			<table style="width: 100%;">
+
+				<tr>
+					<td style="background-color: #eeeeee; width: 15%;">
+					<div align="center" style="height: 50px"><a href="../../resources/html/1.html">用户管理</a></div>
+					<div align="center" style="height: 90px">图表设计</div>
+					<div align="center" style="height: 90px"><a href="../../resources/html/reportGird.html">报表设计</a></div>
+					 </td>
+				<td style="width: 85%;">
+					<table id="dg" title="所有图表" class="easyui-datagrid"
+						style="width: 1100px; height: 530px" url="../../reportChart/findAll.json"
+						toolbar="#toolbar" pagination="false" rownumbers="false"
+						fitColumns="true" singleSelect="true">
+						<thead>
+							<tr>
+								<th field="code" width="50">图表编码</th>
+								<th field="name" width="50">图表名称</th>
+								<th field="title" width="50">图表标题</th>
+								<th field="remark" width="50">图表单位</th>
+								<th field="reportChartType" width="50">图表类型</th>
+								<th field="busiName" width="50">后台服务</th>
+							</tr>
+						</thead>
+					</table>
+					<div id="toolbar">
+						<a href="#" class="easyui-linkbutton" iconCls="icon-add"
+							plain="true" onclick="newUser()">创建图表</a> <a href="#"
+							class="easyui-linkbutton" iconCls="icon-edit" plain="true"
+							onclick="editUser()">编辑图表</a> <a href="#"
+							class="easyui-linkbutton" iconCls="icon-remove" plain="true"
+							onclick="removeUser()">删除图表</a>
+							<a href="#"
+							class="easyui-linkbutton" iconCls="icon-remove" plain="true"
+							onclick="queryCondition()">查询条件</a>
+							<!-- <a href="#"
+							class="easyui-linkbutton" iconCls="icon-remove" plain="true"
+							onclick="queryCoutline()">维度信息</a> -->
+							<a href="#"
+							class="easyui-linkbutton" iconCls="icon-remove" plain="true"
+							onclick="queryField()">对照信息</a>
+					</div>
+
+					<div id="dlg" class="easyui-dialog"
+						style="width: 520px; height: 470px; padding: 10px 20px"
+						closed="true" buttons="#dlg-buttons">
+						<div class="ftitle">图表信息</div>
+						<form id="fm" method="post" novalidate>
+							
+							<div class="fitem">
+								<label>图表编码:</label> <input name="code"
+									class="easyui-validatebox" required="true" missingMessage="图表编码不能为空">
+							</div>
+							<div class="fitem">
+								<label>图表名称:</label> <input name="name"
+									class="easyui-validatebox" required="true" missingMessage="图表名称不能为空">
+							</div>
+							<div class="fitem">
+								<label>图表标题:</label> <input name="title"
+									class="easyui-validatebox" required="true" missingMessage="图表标题不能为空">
+							</div>
+							<div class="fitem">
+								<label>图表类型:</label>
+							<select name="reportChartType" style="width: 180px;height: 25px">
+								<option value="柱状图" selected="selected">柱状图</option>
+								<option value="线状图">线状图</option>
+								</select>
+								</div>
+							<div class="fitem">
+								<label>图表单位:</label> <input name="remark"
+									class="easyui-validatebox" required="true" missingMessage="图表单位不能为空">
+							</div>
+					
+							<div class="fitem">
+								<label>后台服务:</label> <input name="busiName"
+									class="easyui-validatebox" required="true" missingMessage="后台服务不能为空">
+							</div>
+						</form>
+					</div>
+					<div id="dlg-buttons">
+						<a href="#" class="easyui-linkbutton" iconCls="icon-ok"
+							onclick="saveUser()">保存</a> <a href="#" class="easyui-linkbutton"
+							iconCls="icon-cancel"
+							onclick="javascript:$('#dlg').dialog('close')">取消</a>
+					</div>
+				</td>
+			</tr>
+			</table>
+
+		</div>
+
+
+		<!-- </div> -->
+		<div class="footer">
+			 <a href='http://www.yonyouup.cn/' target="blank">用友优普</a> 版权所有&nbsp;&copy;&nbsp;2015-2020
+		</div>
+	</body>
+</html>
+

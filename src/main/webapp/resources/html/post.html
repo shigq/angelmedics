@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../scripts/jquery-1.11.2.js"></script>
+<script type="text/javascript">
+	function doService(){
+	    var url= $("#url").val(); 
+	    var postData= $("#postData").val(); 
+			jQuery.ajax({  
+	   			url: url, async : false,type: "POST",
+	   			data: postData,
+				contentType:"application/json; charset=utf-8",
+	       		success: function(response) {
+	       			var jsonStr = JSON.stringify(response);
+	       			$("#resultdata").html(jsonStr);
+	       		} ,
+				error: function(e){
+					//debugger;
+					$("#resultdata").html(e);
+				}
+	 		}); 
+	
+	}
+
+  </script>
+
+</head>
+<body>
+	<p>
+		<label for="geturl" id="geturl_l">URL：</label> <input type="text"
+			name="url" id="url" size="40" value="" />
+
+	</p>
+	<p>
+		<label for="data" id="data_l">请求数据：</label>
+		<textarea name="postData" id="postData" cols="60" rows="10"></textarea>
+	</p>
+	<p>
+		<input type="button" name="submit" id="submit" value="提交"
+			onClick="doService()" />
+	</p>
+	<hr />
+	<p>返回结果：</p>
+	<div id="resultdata"></div>
+	<p>&nbsp;</p>
+
+</body>
+</html>
