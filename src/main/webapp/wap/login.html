@@ -10,19 +10,40 @@
 <link rel="stylesheet" href="css/animation.css"/>
 <link rel="stylesheet" href="css/style.css"/>
 <link rel="stylesheet" href="css/media.css"/>
-<script type="text/javascript" src="js/jquery-1.10.1.min.js"></script>
+<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 </head>
 <script type="text/javascript">
 
 function doLogin() {
 	if (validate()) {
-		$.post("/patient/login.do", $('form').serialize(), function(result) {
+		/* $.post("../../j_spring_security_check", $('form').serialize(), function(result) {
 			if ("false" == result) {
 				$("#errorMsg").empty().append("用户名或密码不正确！");
 			} else {
 				self.location='index.html';
 			}
-		});;
+		});; */
+		var url = "../../j_spring_security_check";  
+	    var username= $("input[name='username']").val();  
+	    var password= $("input[name='password']").val();  
+		$.ajax({  
+	        url:url,  
+	        type:"POST",  
+	        data:"j_username="+username+"&j_password="+password,  
+	        dataType : "json",
+	        success: function(response)  {
+	            if(response != null && response.success == true) {
+	            	 window.location.href="../../wap/index.html"; 
+	            } else {
+	                // response is JSON version of the Spring's Authentication
+	               // alert("authentication success");
+	            	$("#errorMsg").text(response.message);
+	            }
+	        },
+	        error: function(response)  { 
+	        	$("#results").text(response.message);
+	        }
+	    });
 	}
 }
 
@@ -52,7 +73,7 @@ function validate(){
 		<form>
 	    	<div class="sTab">
 	        	<i class="ico ico21"></i>
-	            <input name="usercode" type="text" id="usercode" placeholder="请输入手机号码">
+	            <input name="username" type="text" id="username" placeholder="请输入手机号码">
 	        </div>
 	        <div class="sTab mt15">
 	        	<i class="ico ico22"></i>

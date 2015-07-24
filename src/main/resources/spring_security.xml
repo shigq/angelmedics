@@ -6,15 +6,76 @@
            http://www.springframework.org/schema/security
            http://www.springframework.org/schema/security/spring-security.xsd">
 
-	<http pattern="/**" security="none" />
+	<!-- a shared request cache is required for multiple http elements -->
+	<beans:bean id="requestCache"
+		class="org.springframework.security.web.savedrequest.HttpSessionRequestCache" />
+
 	
-	<authentication-manager>
-		<authentication-provider>
-			<user-service>
-				<user name="stone" password="stone" authorities="ROLE_USER"/>
-			</user-service>
+	<http pattern="/resources/**" security="none" />
+	<!-- 
+	<http pattern="/report/**" security="none" />
+	<http pattern="/kukaws/**" security="none" />
+	<http pattern="/captcha/image" security="none" />
+	  -->
+
+
+	<!-- 验证码过滤器 -->
+	<beans:bean id="validateCodeAuthenticationFilter"
+		class="com.angelmedics.security.CustomerPasswordAuthenticationFilter">
+		<beans:property name="authenticationSuccessHandler"
+			ref="loginLogAuthenticationSuccessHandler"></beans:property>
+		<beans:property name="authenticationFailureHandler"
+			ref="simpleUrlAuthenticationFailureHandler"></beans:property>
+		<beans:property name="authenticationManager" ref="authenticationManager"></beans:property>
+	</beans:bean>
+
+	<!-- 登录成功 -->
+	<beans:bean id="loginLogAuthenticationSuccessHandler"
+		class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+		<beans:property name="defaultTargetUrl" value="/rest/security/default-target"></beans:property>
+	</beans:bean>
+
+	<!-- 登录失败 -->
+	<beans:bean id="simpleUrlAuthenticationFailureHandler"
+		class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+		<beans:property name="defaultFailureUrl"
+			value="/rest/security/authentication-failure"></beans:property>
+	</beans:bean>
+
+	<!-- AJAX <http auto-config="true" use-expressions="true" pattern="/manager/**"> -->
+	<http pattern="/**">
+		<!-- 设置登录过滤器 -->
+		<custom-filter before="FORM_LOGIN_FILTER" ref="validateCodeAuthenticationFilter" />
+
+		<form-login login-page="/rest/security/login-page"
+			authentication-failure-url="/rest/security/authentication-failure"
+			default-target-url="/rest/security/default-target"
+			always-use-default-target="true" />
+
+		<logout delete-cookies="JSESSIONID" logout-success-url="/login.html" />
+		
+		<!--  
+		<intercept-url pattern="/manager/**" access="ROLE_ADMIN" />
+		<intercept-url pattern="/reportChart/**" access="ROLE_ADMIN" />
+		<intercept-url pattern="/reportGrid/**" access="ROLE_ADMIN" />
+		<intercept-url pattern="/queryParm/**" access="ROLE_ADMIN" />
+		<intercept-url pattern="/column/**" access="ROLE_ADMIN" />
+		<intercept-url pattern="/field/**" access="ROLE_ADMIN" />
+		<intercept-url pattern="/hospital/**" access="ROLE_ADMIN" />
+		-->
+		<request-cache ref="requestCache" />
+	</http>
+
+
+	<!-- authentication manager and other configuration go below -->
+
+	<authentication-manager alias="authenticationManager">
+		<authentication-provider user-service-ref='userDetailsService'>
 		</authentication-provider>
 	</authentication-manager>
+
+	<beans:bean id="userDetailsService"
+		class="com.angelmedics.security.UserDetailsServiceImpl" />
 
 	<!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
 	<beans:bean id="mappingJackson2HttpMessageConverter"
